@@ -12,12 +12,18 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.lang.reflect.Method;
 
 @Aspect
 @Component
 @Slf4j
 public class AuthAspect {
+
+    @Resource
+    private HttpServletRequest request;
 
     @Pointcut("@within(com.example.demo.config.annotations.Auth) || @annotation(com.example.demo.config.annotations.Auth)")
     public void authPoint() {
@@ -33,6 +39,10 @@ public class AuthAspect {
         if (ObjectUtil.isEmpty(annotation)) {
             annotation = method.getDeclaringClass().getAnnotation(Auth.class);
         }
+
+        HttpSession session = request.getSession();
+        System.out.println(session.getId());
+
         log.info(annotation.message());
     }
 
